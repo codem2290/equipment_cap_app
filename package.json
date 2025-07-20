@@ -6,21 +6,47 @@
   "license": "UNLICENSED",
   "private": true,
   "dependencies": {
+    "@cap-js/hana": "^2",
     "@sap/cds": "^9",
+    "@sap/hana-client": "^2.25.29",
+    "@sap/xssec": "^4",
     "express": "^4"
   },
   "engines": {
     "node": ">=20"
   },
   "devDependencies": {
+    "@cap-js/cds-types": "^0.11.0",
     "@cap-js/sqlite": "^2",
-    "@cap-js/cds-types": "^0.11.0"
+    "@sap/cds-dk": ">=8",
+    "@sap/hdi-deploy": "4.9.5",
+    "rimraf": "^5.0.5",
+    "mbt": "^1.2.29"
   },
   "scripts": {
     "start": "cds-serve",
-    "watch-equipment_manage_admin": "cds watch --open equipment_manage_admin/webapp/index.html?sap-ui-xx-viewCache=false"
+    "watch-equipment_manage_admin": "cds watch --open equipment_manage_admin/webapp/index.html?sap-ui-xx-viewCache=false",
+    "watch-employee_equip_app": "cds watch --open employee_equip_app/webapp/index.html?sap-ui-xx-viewCache=false",
+    "undeploy": "cf undeploy EquipmentManageApp --delete-services --delete-service-keys --delete-service-brokers",
+    "build": "rimraf resources mta_archives && mbt build --mtar archive",
+    "deploy": "cf deploy mta_archives/archive.mtar --retries 1"
   },
   "sapux": [
-    "app/equipment_manage_admin"
-  ]
+    "app/equipment_manage_admin",
+    "app/employee_equip_app"
+  ],
+  "cds": {
+    "requires": {
+      "[production]": {
+        "db": "hana",
+        "auth": "xsuaa"
+      },
+      "db": {
+        "kind": "hana"
+      }
+    },
+    "hana": {
+      "deploy-format": "hdbtable"
+    }
+  }
 }

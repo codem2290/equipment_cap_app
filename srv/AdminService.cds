@@ -1,5 +1,7 @@
 using {equipment.com.app as AdminModel} from '../db/data-model';
 
+//@impl: 
+
 service AdminEquipmentService {
 
     @odata.draft.enabled

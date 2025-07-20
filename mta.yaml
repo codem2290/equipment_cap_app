@@ -1,0 +1,100 @@
+_schema-version: 3.3.0
+ID: EquipmentManageApp
+description: A simple CAP project.
+version: 1.0.0
+modules:
+- name: EquipmentManageApp-srv
+  type: nodejs
+  path: gen/srv
+  requires:
+  - name: EquipmentManageApp-db
+  - name: EquipmentManageApp-auth
+  provides:
+  - name: srv-api
+    properties:
+      srv-url: ${default-url}
+  parameters:
+    buildpack: nodejs_buildpack
+    instances: 1
+  build-parameters:
+    builder: npm-ci
+- name: EquipmentManageApp-db-deployer
+  type: hdb
+  path: gen/db
+  requires:
+  - name: EquipmentManageApp-db
+  parameters:
+    buildpack: nodejs_buildpack
+- name: EquipmentManageApp-app-content
+  type: com.sap.application.content
+  path: .
+  requires:
+  - name: EquipmentManageApp-repo-host
+    parameters:
+      content-target: true
+  build-parameters:
+    build-result: resources
+    requires:
+    - artifacts:
+      - comsapdemoemployeeequipapp.zip
+      name: comsapdemoemployeeequipapp
+      target-path: resources/
+- name: comsapdemoemployeeequipapp
+  type: html5
+  path: app/employee_equip_app
+  build-parameters:
+    build-result: dist
+    builder: custom
+    commands:
+    - npm install
+    - npm run build:cf
+    supported-platforms: []
+resources:
+- name: EquipmentManageApp-db
+  type: com.sap.xs.hdi-container
+  parameters:
+    service: hana
+    service-plan: hdi-shared
+- name: EquipmentManageApp-auth
+  type: org.cloudfoundry.managed-service
+  parameters:
+    config:
+      tenant-mode: dedicated
+      xsappname: EquipmentManageApp-${org}-${space}
+    path: ./xs-security.json
+    service: xsuaa
+    service-plan: application
+- name: EquipmentManageApp-repo-host
+  type: org.cloudfoundry.managed-service
+  parameters:
+    service: html5-apps-repo
+    service-name: EquipmentManageApp-html5-service
+    service-plan: app-host
+- name: EquipmentManageApp-destination-service
+  type: org.cloudfoundry.managed-service
+  parameters:
+    config:
+      HTML5Runtime_enabled: false
+      init_data:
+        instance:
+          destinations:
+          - Authentication: NoAuthentication
+            Name: ui5
+            ProxyType: Internet
+            Type: HTTP
+            URL: https://ui5.sap.com
+          existing_destinations_policy: update
+      version: 1.0.0
+    service: destination
+    service-name: EquipmentManageApp-destination-service
+    service-plan: lite
+parameters:
+  deploy_mode: html5-repo
+  enable-parallel-deployments: true
+build-parameters:
+  before-all:
+  - builder: custom
+    commands:
+    - npm ci
+    - npx cds build --production
+    - npx rimraf gen/db/src/gen/data
