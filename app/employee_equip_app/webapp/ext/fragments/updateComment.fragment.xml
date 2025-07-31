@@ -1,0 +1,16 @@
+<core:FragmentDefinition xmlns:form="sap.ui.layout.form" xmlns:core="sap.ui.core" xmlns:m="sap.m">
+    <m:Dialog showHeader="true" title="Update Status" core:require="{handler: 'com/sap/demo/employeeequipapp/ext/controller/StatusUpdateTask'}">
+        <m:content>
+            <form:SimpleForm editable="true">
+                <m:Label text="Comment"></m:Label>
+                <m:TextArea id="commentBox"></m:TextArea>
+            </form:SimpleForm>
+        </m:content>
+        <m:beginButton>
+            <m:Button text="Submit" press="handler.onSubmitStatus"></m:Button>
+        </m:beginButton>
+        <m:endButton>
+            <m:Button text="Cancel" press="handler.onCloseDialog"></m:Button>
+        </m:endButton>
+    </m:Dialog>
+</core:FragmentDefinition>

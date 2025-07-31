@@ -1,57 +1,7 @@
 using AdminEquipmentService as service from '../../srv/AdminService';
 using from '../../db/data-model';
 
-
-
-// annotate service.Equipments @(UI.LineItem: [
-//     {
-//         $Type: 'UI.DataField',
-//         Value: ID,
-//     },
-//     {
-//         $Type: 'UI.DataField',
-//         Value: name,
-//     },
-//     {
-//         $Type: 'UI.DataField',
-//         Value: type.name,
-//         Label : 'Equipment Type',
-//     },
-//     {
-//         $Type: 'UI.DataField',
-//         Value: manufacturer
-//     },
-//     {
-//         $Type: 'UI.DataField',
-//         Value: location.name
-//     },
-//     {
-//         $Type: 'UI.DataField',
-//         Value: status.name,
-//         Criticality : status.colorCode,
-//         CriticalityRepresentation : #WithIcon,
-//     },
-//     {
-//         $Type : 'UI.DataField',
-//         Value : createdBy,
-//     },
-// ],
-//     UI.SelectionFields : [
-//         status_code
-//     ],)
 annotate service.Equipments with @(
-    UI.HeaderInfo: {
-        TypeNamePlural : 'Equipment',
-        TypeName : '',
-        Title : {
-            $Type : 'UI.DataField',
-            Value : name,
-        },
-    },
-    UI.SelectionFields : [
-        status_code,
-        type_code,
-    ],
     UI.LineItem : [
         {
             $Type : 'UI.DataField',
@@ -60,29 +10,30 @@ annotate service.Equipments with @(
         },
         {
             $Type : 'UI.DataField',
-            Value : name,
-        },
-        {
-            $Type : 'UI.DataField',
             Value : manufacturer,
         },
         {
             $Type : 'UI.DataField',
-            Value : type.name,
+            Value : name,
         },
         {
             $Type : 'UI.DataField',
-            Value : status.name,
-            Criticality : status.colorCode,
-            CriticalityRepresentation : #WithIcon,
+            Value : type_code,
+            Label : 'type_code',
         },
         {
             $Type : 'UI.DataField',
-            Value : location.name,
+            Value : status_code,
+            Label : 'status_code',
         },
         {
             $Type : 'UI.DataField',
-            Value : createdBy,
+            Value : location_code,
+            Label : 'location_code',
+        },
+        {
+            $Type : 'UI.DataField',
+            Value : modifiedBy,
         },
     ],
     UI.Facets : [
@@ -94,15 +45,9 @@ annotate service.Equipments with @(
         },
         {
             $Type : 'UI.ReferenceFacet',
-            Label : 'Task Assigned to Employee',
-            ID : 'TaskAssignedtoEmployee',
-            Target : 'tasks/@UI.LineItem#TaskAssignedtoEmployee',
-        },
-        {
-            $Type : 'UI.ReferenceFacet',
-            Label : 'Reported Issues',
-            ID : 'ReportedIssues',
-            Target : 'issues/@UI.LineItem#ReportedIssues',
+            Label : 'Task Details',
+            ID : 'TaskDetails',
+            Target : 'tasks/@UI.LineItem#TaskDetails',
         },
     ],
     UI.FieldGroup #EquipmentDetails : {
@@ -115,105 +60,41 @@ annotate service.Equipments with @(
             },
             {
                 $Type : 'UI.DataField',
+                Value : location_code,
+                Label : 'location_code',
+            },
+            {
+                $Type : 'UI.DataField',
                 Value : manufacturer,
             },
             {
                 $Type : 'UI.DataField',
-                Value : name,
+                Value : modifiedAt,
             },
             {
                 $Type : 'UI.DataField',
-                Value : location.name,
+                Value : modifiedBy,
+            },
+            {
+                $Type : 'UI.DataField',
+                Value : name,
             },
             {
                 $Type : 'UI.DataField',
                 Value : status_code,
-                Label : 'Equipment Status',
+                Label : 'status_code',
             },
             {
                 $Type : 'UI.DataField',
-                Value : type.name,
-            },
-            {
-                $Type : 'UI.DataField',
-                Value : createdAt,
-            },
-        ],
-    },
-    UI.HeaderFacets : [
-        {
-            $Type : 'UI.ReferenceFacet',
-            Label : 'Details',
-            ID : 'Details',
-            Target : '@UI.FieldGroup#Details',
-        },
-    ],
-    UI.FieldGroup #Details : {
-        $Type : 'UI.FieldGroupType',
-        Data : [
-            {
-                $Type : 'UI.DataField',
-                Value : manufacturer,
-            },
-            {
-                $Type : 'UI.DataField',
-                Value : name,
+                Value : type_code,
+                Label : 'type_code',
             },
         ],
     },
 );
 
-annotate service.Equipments with {
-    status @(
-        Common.Label : '{i18n>Status}',
-        Common.ValueList : {
-            $Type : 'Common.ValueListType',
-            CollectionPath : 'EquipmentStatus',
-            Parameters : [
-                {
-                    $Type : 'Common.ValueListParameterInOut',
-                    LocalDataProperty : status_code,
-                    ValueListProperty : 'code',
-                },
-            ],
-        },
-        Common.ValueListWithFixedValues : true,
-        Common.Text : status.name,
-        Common.Text.@UI.TextArrangement : #TextOnly,
-    )
-};
-
-annotate service.EquipmentStatus with {
-    code @(
-        Common.Text : name,
-        Common.Text.@UI.TextArrangement : #TextOnly,
-    )
-};
-
-annotate service.Equipments with {
-    type @(
-        Common.Label : '{i18n>nameType}',
-        Common.ValueList : {
-            $Type : 'Common.ValueListType',
-            CollectionPath : 'EquipmentTypes',
-            Parameters : [
-                {
-                    $Type : 'Common.ValueListParameterInOut',
-                    LocalDataProperty : type_code,
-                    ValueListProperty : 'code',
-                },
-            ],
-        },
-        Common.ValueListWithFixedValues : true,
-    )
-};
-
-annotate service.EquipmentTypes with {
-    code @Common.Text : name
-};
-
 annotate service.Tasks with @(
-    UI.LineItem #TaskAssignedtoEmployee : [
+    UI.LineItem #TaskDetails : [
         {
             $Type : 'UI.DataField',
             Value : ID,
@@ -236,11 +117,6 @@ annotate service.Tasks with @(
         },
         {
             $Type : 'UI.DataField',
-            Value : assignedTo_ID,
-            Label : 'Assigned To',
-        },
-        {
-            $Type : 'UI.DataField',
             Value : priority_code,
             Label : 'Priority',
         },
@@ -249,90 +125,145 @@ annotate service.Tasks with @(
             Value : status_code,
             Label : 'Status',
         },
-    ]
+        {
+            $Type : 'UI.DataField',
+            Value : assignedTo_ID,
+            Label : 'Assigned to',
+        },
+    ],
+    UI.Facets : [
+        {
+            $Type : 'UI.ReferenceFacet',
+            Label : 'Task Create Form',
+            ID : 'TaskCreateForm',
+            Target : '@UI.FieldGroup#TaskCreateForm',
+        },
+    ],
+    UI.FieldGroup #TaskCreateForm : {
+        $Type : 'UI.FieldGroupType',
+        Data : [
+            {
+                $Type : 'UI.DataField',
+                Value : ID,
+                Label : 'ID',
+            },
+            {
+                $Type : 'UI.DataField',
+                Value : equipment_ID,
+                Label : 'Equipment ID',
+            },
+            {
+                $Type : 'UI.DataField',
+                Value : dueDate,
+                Label : 'Due Date',
+            },
+            {
+                $Type : 'UI.DataField',
+                Value : description,
+                Label : 'Description',
+            },
+            {
+                $Type : 'UI.DataField',
+                Value : comment,
+                Label : 'Comment',
+            },
+            {
+                $Type : 'UI.DataField',
+                Value : assignedTo_ID,
+                Label : 'Assigned To',
+            },
+            {
+                $Type : 'UI.DataField',
+                Value : priority_code,
+                Label : 'Priority',
+            },
+            {
+                $Type : 'UI.DataField',
+                Value : status_code,
+                Label : 'Status',
+            },
+            {
+                $Type : 'UI.DataField',
+                Value : empName,
+                Label : 'Assigned Employee Name',
+            },
+            {
+                $Type : 'UI.DataField',
+                Value : empUser,
+                Label : 'Assigned Employee User',
+            },
+            {
+                $Type : 'UI.DataField',
+                Value : email,
+                Label : 'Assigned Employee Email',
+            },
+        ],
+    },
 );
 
-annotate service.Issues with @(
-    UI.LineItem #ReportedIssues : [
-        {
-            $Type : 'UI.DataField',
-            Value : ID,
-            Label : 'ID',
-        },
-        {
-            $Type : 'UI.DataField',
-            Value : equipment_ID,
-            Label : 'Equipment ID',
-        },
-        {
-            $Type : 'UI.DataField',
-            Value : description,
-            Label : 'Description',
-        },
-        {
-            $Type : 'UI.DataField',
-            Value : reportedBy_ID,
-            Label : 'Reported By',
-        },
-        {
-            $Type : 'UI.DataField',
-            Value : status_code,
-            Label : 'Status',
-        },
-        {
-            $Type : 'UI.DataField',
-            Value : createdAt,
-        },
-    ]
-);
+// annotate service.Tasks with {
+//     priority @(
+//         Common.ValueList : {
+//             $Type : 'Common.ValueListType',
+//             CollectionPath : 'TaskPriority',
+//             Parameters : [
+//                 {
+//                     $Type : 'Common.ValueListParameterInOut',
+//                     LocalDataProperty : priority_code,
+//                     ValueListProperty : 'code',
+//                 },
+//             ],
+//         },
+//         Common.ValueListWithFixedValues : true,
+// )};
 
+// annotate service.TaskPriority with {
+//     code @Common.Text : name
+// };
 
+// annotate service.Tasks with {
+//     status @(
+//         Common.ValueList : {
+//             $Type : 'Common.ValueListType',
+//             CollectionPath : 'TaskStatus',
+//             Parameters : [
+//                 {
+//                     $Type : 'Common.ValueListParameterInOut',
+//                     LocalDataProperty : status_code,
+//                     ValueListProperty : 'code',
+//                 },
+//             ],
+//         },
+//         Common.ValueListWithFixedValues : true,
+// )};
 
-annotate service.Tasks with {
-    priority @(
-        Common.ValueList : {
-            $Type : 'Common.ValueListType',
-            CollectionPath : 'TaskPriority',
-            Parameters : [
-                {
-                    $Type : 'Common.ValueListParameterInOut',
-                    LocalDataProperty : priority_code,
-                    ValueListProperty : 'code',
-                },
-            ],
-        },
-        Common.ValueListWithFixedValues : true,
-        Common.FieldControl : #Mandatory,
-)};
+// annotate service.TaskStatus with {
+//     code @Common.Text : name
+// };
 
-annotate service.TaskPriority with {
-    code @(
-        Common.Text : name,
-        Common.Text.@UI.TextArrangement : #TextOnly,
-)};
+// annotate service.Tasks with {
+//     assignedTo @(
+//         Common.ValueList : {
+//             $Type : 'Common.ValueListType',
+//             CollectionPath : 'Employees',
+//             Parameters : [
+//                 {
+//                     $Type : 'Common.ValueListParameterInOut',
+//                     LocalDataProperty : assignedTo_ID,
+//                     ValueListProperty : 'ID',
+//                 },
+//             ],
+//         },
+//         Common.ValueListWithFixedValues : true,
+// )};
 
-annotate service.Tasks with {
-    status @(
-        Common.ValueList : {
-            $Type : 'Common.ValueListType',
-            CollectionPath : 'TaskStatus',
-            Parameters : [
-                {
-                    $Type : 'Common.ValueListParameterInOut',
-                    LocalDataProperty : status_code,
-                    ValueListProperty : 'code',
-                },
-            ],
-        },
-        Common.ValueListWithFixedValues : true,
-        Common.FieldControl : #Mandatory,
-)};
+// annotate service.Employees with {
+//     ID @Common.Text : email
+// };
 
-annotate service.TaskStatus with {
-    code @(
-        Common.Text : name,
-        Common.Text.@UI.TextArrangement : #TextOnly,
-)};
+// annotate service.Tasks with {
+//     equipment @Common.FieldControl : #ReadOnly
+// };
 
 annotate service.Tasks with {
     assignedTo @(
@@ -348,16 +279,18 @@ annotate service.Tasks with {
             ],
         },
         Common.ValueListWithFixedValues : true,
-        Common.FieldControl : #Mandatory,
 )};
 
 annotate service.Employees with {
-    ID @(
-        Common.Text : email,
-        Common.Text.@UI.TextArrangement : #TextOnly,
-)};
-
-annotate service.Tasks with {
-    equipment @Common.FieldControl : #ReadOnly
+    ID @Common.Text : name
 };
+
+annotate service.Tasks with @(Common.SideEffects: {
+    SourceProperties : [
+        'assignedTo_ID'
+    ],
+    TargetProperties: [
+      'empName', 'empUser', 'email'
+    ]
+});
 

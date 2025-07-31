@@ -18,17 +18,26 @@ annotate service.MyTask with @(
         },
         {
             $Type : 'UI.DataField',
-            Value : createdBy,
-        },
-        {
-            $Type : 'UI.DataField',
-            Value : issues.status.name,
-            Label : 'Status',
+            Value : equipment.name,
         },
         {
             $Type : 'UI.DataField',
             Value : assignedTo_ID,
             Label : 'Assigned To',
+        },
+        {
+            $Type : 'UI.DataField',
+            Value : status_code,
+            Label : 'Status',
+        },
+        {
+            $Type : 'UI.DataField',
+            Value : priority_code,
+            Label : 'Priority',
+        },
+        {
+            $Type : 'UI.DataField',
+            Value : createdBy,
         },
     ],
     UI.Facets : [
@@ -73,10 +82,32 @@ annotate service.MyTask with @(
             },
         ],
     },
+    UI.DeleteHidden : true,
+    UI.CreateHidden: true,
+    UI.DataPoint #status_code : {
+        $Type : 'UI.DataPointType',
+        Value : status_code,
+        Title : 'status_code',
+    },
+    UI.HeaderFacets : [
+        {
+            $Type : 'UI.ReferenceFacet',
+            ID : 'status_code',
+            Target : '@UI.DataPoint#status_code1',
+        },
+    ],
+    UI.DataPoint #status_code1 : {
+        $Type : 'UI.DataPointType',
+        Value : status_code,
+        Title : 'Status',
+    },
 );
 
 annotate service.MyTask with {
-    description @UI.MultiLineText : true
+    description @(
+        UI.MultiLineText : true,
+        Common.FieldControl : #ReadOnly,
+    )
 };
 
 annotate service.MyIssues with @(
@@ -106,4 +137,46 @@ annotate service.MyIssues with @(
         },
     ]
 );
+
+annotate service.Equipments with {
+    name @Common.FieldControl : #ReadOnly
+};
+
+annotate service.Equipments with {
+    manufacturer @Common.FieldControl : #ReadOnly
+};
+
+annotate service.Equipments with {
+    location @Common.FieldControl : #ReadOnly
+};
+
+annotate service.MyTask with {
+    dueDate @Common.FieldControl : #ReadOnly
+};
+
+
+// annotate service.MyTask with @(
+//     UI.CreateHidden: true,
+//     UI.DeleteHidden: true
+// )
+
+annotate service.MyIssues with {
+    status @(
+        Common.ValueList : {
+            $Type : 'Common.ValueListType',
+            CollectionPath : 'IssueStatus',
+            Parameters : [
+                {
+                    $Type : 'Common.ValueListParameterInOut',
+                    LocalDataProperty : status_code,
+                    ValueListProperty : 'code',
+                },
+            ],
+        },
+        Common.ValueListWithFixedValues : true,
+)};
+
+annotate service.IssueStatus with {
+    code @Common.Text : name
+};
 

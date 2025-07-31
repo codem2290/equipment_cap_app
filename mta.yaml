@@ -39,9 +39,37 @@ modules:
       - comsapdemoemployeeequipapp.zip
       name: comsapdemoemployeeequipapp
       target-path: resources/
+    - artifacts:
+      - project1.zip
+      name: project1
+      target-path: resources/
+    - artifacts:
+      - emptaskapp.zip
+      name: emptaskapp
+      target-path: resources/
 - name: comsapdemoemployeeequipapp
   type: html5
   path: app/employee_equip_app
+  build-parameters:
+    build-result: dist
+    builder: custom
+    commands:
+    - npm install
+    - npm run build:cf
+    supported-platforms: []
+- name: project1
+  type: html5
+  path: app/project1
+  build-parameters:
+    build-result: dist
+    builder: custom
+    commands:
+    - npm install
+    - npm run build:cf
+    supported-platforms: []
+- name: emptaskapp
+  type: html5
+  path: app/emp_task_app
   build-parameters:
     build-result: dist
     builder: custom

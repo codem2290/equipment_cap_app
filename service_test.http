@@ -1,0 +1,9 @@
+### Call Action Import
+
+POST http://localhost:4004/odata/v4/employee-equipment/setTaskStatusComplete
+Content-Type: application/json
+
+{
+    "taskID": "29a4f140-58a1-4a13-8dad-e0286dff6a8f",
+    "comment": "Testing Status Update"
+}

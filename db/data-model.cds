@@ -13,13 +13,17 @@ entity Equipments : cuid, managed {
     status       : Association to EquipmentStatus;
     tasks        : Composition of many Tasks
                        on tasks.equipment = $self;
-    issues       : Composition of many Issues
+    issues       : Association to many Issues
                        on issues.equipment = $self;
 }
 
 entity Tasks : cuid, managed {
     description : String(255);
     dueDate     : Date;
+    comment     : String(255);
+    empName     : String;
+    empUser     : String;
+    email       : String;
     priority    : Association to TaskPriority;
     status      : Association to TaskStatus;
     equipment   : Association to Equipments;

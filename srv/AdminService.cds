@@ -1,12 +1,12 @@
 using {equipment.com.app as AdminModel} from '../db/data-model';
 
-//@impl: 
+//@impl:
 
 service AdminEquipmentService {
 
     @odata.draft.enabled
     entity Equipments      as projection on AdminModel.Equipments;
-    // entity Tasks as projection on AdminModel.Equipments;
+    entity Tasks           as projection on AdminModel.Tasks;
     entity Issues          as projection on AdminModel.Issues;
     entity IssueStatus     as projection on AdminModel.IssueStatus;
     entity TaskStatus      as projection on AdminModel.TaskStatus;
